@@ -2,6 +2,7 @@ import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
+import Notification from '../models/Notification';
 
 import Mail from '../../lib/Mail';
 
@@ -38,6 +39,11 @@ class OrderController {
         city: recipient.city,
         zipcode: recipient.zipcode,
       },
+    });
+
+    await Notification.create({
+      user_id: deliveryman_id,
+      content: 'O pedido de Fulano está pronto para ser retirado (:',
     });
 
     return res.json(order);

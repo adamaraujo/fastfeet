@@ -8,6 +8,7 @@ import RecipientController from './app/controllers/RecipientController';
 import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import OrderController from './app/controllers/OrderController';
+import NotificationController from './app/controllers/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
 import adminMiddleware from './app/middlewares/admin';
@@ -40,6 +41,9 @@ routes.get('/orders', adminMiddleware, OrderController.index);
 routes.post('/orders', adminMiddleware, OrderController.store);
 routes.put('/orders/:id', adminMiddleware, OrderController.update);
 routes.delete('/orders/:id', adminMiddleware, OrderController.delete);
+
+routes.get('/:id/notifications/', NotificationController.index);
+routes.put('/notifications/:id', NotificationController.update);
 
 routes.put('/users', adminMiddleware, UserController.update);
 
