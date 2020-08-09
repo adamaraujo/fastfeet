@@ -9,18 +9,32 @@ import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import OrderController from './app/controllers/OrderController';
 import NotificationController from './app/controllers/NotificationController';
+import DeliveryController from './app/controllers/DeliveryController';
+import WithdrawController from './app/controllers/WithdrawController';
+import DeliveredController from './app/controllers/DeliveredController';
 
 import authMiddleware from './app/middlewares/auth';
 import adminMiddleware from './app/middlewares/admin';
-import deliverymanMiddleware from './app/middlewares/deliveryman';
 
 const routes = new Router();
 const upload = multer(multerConfig);
 
 routes.post('/users', UserController.store);
+
 routes.post('/sessions', SessionController.store);
 
-routes.use(authMiddleware); // Rotas que necessitam de autenticação para serem acessadas
+routes.get('/deliverymen/:id/deliveries', DeliveryController.index);
+
+routes.put(
+  '/deliverymen/:id/deliveries/:delivery_id/withdraw',
+  WithdrawController.update
+);
+routes.put(
+  '/deliverymen/:id/deliveries/:delivery_id/delivered',
+  DeliveredController.update
+);
+
+routes.use(authMiddleware);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
@@ -42,8 +56,11 @@ routes.post('/orders', adminMiddleware, OrderController.store);
 routes.put('/orders/:id', adminMiddleware, OrderController.update);
 routes.delete('/orders/:id', adminMiddleware, OrderController.delete);
 
-routes.get('/:id/notifications/', NotificationController.index);
-routes.put('/notifications/:id', NotificationController.update);
+routes.get('/deliverymen/:id/notifications', NotificationController.index);
+routes.put(
+  '/deliverymen/:deliveryman_id/notifications/:id',
+  NotificationController.update
+);
 
 routes.put('/users', adminMiddleware, UserController.update);
 

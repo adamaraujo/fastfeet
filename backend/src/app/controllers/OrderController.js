@@ -43,7 +43,7 @@ class OrderController {
 
     await Notification.create({
       user_id: deliveryman_id,
-      content: 'O pedido de Fulano está pronto para ser retirado (:',
+      content: `O pedido ${order.product} de ${recipient.name} está pronto para ser retirado ;)`,
     });
 
     return res.json(order);

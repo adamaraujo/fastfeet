@@ -10,7 +10,7 @@ class NotificationController {
     if (!checkIsDeliveryman) {
       return res
         .status(401)
-        .json({ error: 'Only deliveryman can load notifications' });
+        .json({ error: 'Only deliverymen can load notifications' });
     }
 
     const notifications = await Notification.findAll({
@@ -23,15 +23,25 @@ class NotificationController {
   }
 
   async update(req, res) {
-    const { id } = req.params;
+    const { id: notification_id, deliveryman_id } = req.params;
 
-    const notification = await Notification.findByPk(id);
+    const deliveryman = await Deliveryman.findByPk(deliveryman_id);
 
-    if (!notification) {
-      return res.status(400).json({ error: 'Notification not found' });
+    if (!deliveryman) {
+      return res.status(400).json({ error: 'Deliveryman not found' });
     }
 
-    const { content, read, user_id } = await notification.update({
+    const notification = await Notification.findOne({
+      where: { id: notification_id, user_id: deliveryman_id },
+    });
+
+    if (!notification) {
+      return res
+        .status(400)
+        .json({ error: 'This notification is not from this deliveryman' });
+    }
+
+    const { id, content, read, user_id } = await notification.update({
       read: true,
     });
 
