@@ -12,6 +12,8 @@ import NotificationController from './app/controllers/NotificationController';
 import DeliveryController from './app/controllers/DeliveryController';
 import WithdrawController from './app/controllers/WithdrawController';
 import DeliveredController from './app/controllers/DeliveredController';
+import AdminProblemsController from './app/controllers/AdminProblemsController';
+import DeliveryProblemsController from './app/controllers/DeliveryProblemsController';
 
 import authMiddleware from './app/middlewares/auth';
 import adminMiddleware from './app/middlewares/admin';
@@ -33,6 +35,8 @@ routes.put(
   '/deliverymen/:id/deliveries/:delivery_id/delivered',
   DeliveredController.update
 );
+
+routes.post('/delivery/:id/problems', DeliveryProblemsController.store);
 
 routes.use(authMiddleware);
 
@@ -60,6 +64,17 @@ routes.get('/deliverymen/:id/notifications', NotificationController.index);
 routes.put(
   '/deliverymen/:deliveryman_id/notifications/:id',
   NotificationController.update
+);
+
+routes.get(
+  '/delivery/:id/problems',
+  adminMiddleware,
+  AdminProblemsController.show
+);
+routes.get(
+  '/delivery/problems',
+  adminMiddleware,
+  AdminProblemsController.index
 );
 
 routes.put('/users', adminMiddleware, UserController.update);

@@ -1,4 +1,4 @@
-import { parseISO, getHours, startOfDay, endOfDay, isToday } from 'date-fns';
+import { parseISO, isToday } from 'date-fns';
 import Deliveryman from '../models/Deliveryman';
 import Order from '../models/Order';
 
@@ -33,7 +33,6 @@ class DeliveredController {
     const { end_date: endDate, signature_id } = req.body;
 
     const parsedDate = parseISO(endDate);
-
     const checkIsToday = isToday(parsedDate);
 
     if (!checkIsToday) {
@@ -48,8 +47,6 @@ class DeliveredController {
     });
 
     return res.json(updatedOrder);
-
-    // FALTA VERIFICAR SE A LÓGICA ESTÁ CORRETA E TESTAR!!!!
   }
 }
 

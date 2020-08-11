@@ -7,6 +7,10 @@ class WithdrawController {
   async update(req, res) {
     const { id, delivery_id } = req.params;
 
+    /**
+     * Checks if the deliveryman exists
+     */
+
     const deliveryman = await Deliveryman.findByPk(id);
 
     if (!deliveryman) {
@@ -22,6 +26,11 @@ class WithdrawController {
         .status(400)
         .json({ error: 'This order is not from this deliveryman' });
     }
+
+    /**
+     * Check if delivery already has a start date,
+     * end date or if was canceled
+     */
 
     const { start_date, end_date, canceled_at } = delivery;
 
