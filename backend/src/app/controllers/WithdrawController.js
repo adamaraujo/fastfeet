@@ -1,5 +1,6 @@
 import { parseISO, getHours, startOfDay, endOfDay, isToday } from 'date-fns';
 import { Op } from 'sequelize';
+import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
 import Order from '../models/Order';
 
@@ -42,10 +43,10 @@ class WithdrawController {
 
     const { start_date: startDate } = req.body;
 
-    const parsedDate = parseISO(startDate);
-    const hours = getHours(parsedDate);
+    const parsedStart = parseISO(startDate);
+    const hours = getHours(parsedStart);
 
-    const checkIsToday = isToday(parsedDate);
+    const checkIsToday = isToday(parsedStart);
 
     if (!checkIsToday) {
       return res.status(400).json({
@@ -64,7 +65,7 @@ class WithdrawController {
       where: {
         deliveryman_id: id,
         start_date: {
-          [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
+          [Op.between]: [startOfDay(parsedStart), endOfDay(parsedStart)],
         },
       },
     });

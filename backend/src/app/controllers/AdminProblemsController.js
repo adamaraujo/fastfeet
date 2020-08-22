@@ -1,5 +1,10 @@
 import DeliveryProblems from '../models/DeliveryProblems';
 import Order from '../models/Order';
+import Deliveryman from '../models/Deliveryman';
+import Recipient from '../models/Recipient';
+
+import Queue from '../../lib/Queue';
+import CancellationMail from '../jobs/CancellationMail';
 
 class AdminProblemsController {
   async index(req, res) {
@@ -40,6 +45,57 @@ class AdminProblemsController {
     });
 
     return res.json(deliveryProblems);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const deliveryProblem = await DeliveryProblems.findByPk(id);
+
+    if (!deliveryProblem) {
+      return res.status(400).json({ error: 'Delivery problem does not exist' });
+    }
+
+    const { delivery_id } = deliveryProblem;
+
+    const delivery = await Order.findByPk(delivery_id);
+
+    if (delivery.canceled_at) {
+      return res
+        .status(400)
+        .json({ error: 'This delivery was already canceled' });
+    }
+
+    const canceled_at = new Date();
+
+    await delivery.update({
+      canceled_at,
+    });
+
+    await delivery.reload({
+      include: [
+        {
+          model: Deliveryman,
+          as: 'deliveryman',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Recipient,
+          as: 'recipient',
+          attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+        },
+      ],
+    });
+
+    const { recipient, deliveryman, product } = delivery;
+
+    await Queue.add(CancellationMail.key, {
+      recipient,
+      deliveryman,
+      product,
+    });
+
+    return res.json({ message: 'Delivery canceled with success!' });
   }
 }
 

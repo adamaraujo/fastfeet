@@ -1,5 +1,5 @@
+import * as Yup from 'yup';
 import Recipient from '../models/Recipient';
-import User from '../models/User';
 
 class RecipientController {
   async store(req, res) {
@@ -21,6 +21,10 @@ class RecipientController {
 
     const recipient = await Recipient.findByPk(id);
 
+    if (!recipient) {
+      return res.status(400).json({ error: 'Recipient does not exist' });
+    }
+
     const updatedRecipient = await recipient.update(req.body);
 
     return res.json(updatedRecipient);
@@ -30,6 +34,20 @@ class RecipientController {
     const recipients = await Recipient.findAll();
 
     return res.json(recipients);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    const recipient = await Recipient.findByPk(id);
+
+    if (!recipient) {
+      return res.json({ error: 'Recipient does not exist' });
+    }
+
+    await Recipient.destroy({ where: { id } });
+
+    return res.json({ message: 'Recipient deleted with success!' });
   }
 }
 

@@ -18,47 +18,52 @@ import DeliveryProblemsController from './app/controllers/DeliveryProblemsContro
 import authMiddleware from './app/middlewares/auth';
 import adminMiddleware from './app/middlewares/admin';
 
+import UserValidator from './app/validators/UserValidator';
+import SessionValidator from './app/validators/SessionValidator';
+import RecipientValidator from './app/validators/RecipientValidator';
+import DeliverymanValidator from './app/validators/DeliverymanValidator';
+import OrderValidator from './app/validators/OrderValidator';
+import DeliveredValidator from './app/validators/DeliveredValidator';
+import DeliveryProblemsValidator from './app/validators/DeliveryProblemsValidator';
+import WithdrawValidator from './app/validators/WithdrawValidator';
+
 const routes = new Router();
 const upload = multer(multerConfig);
 
-routes.post('/users', UserController.store);
+routes.post('/users', UserValidator.createValidator, UserController.store);
 
-routes.post('/sessions', SessionController.store);
+routes.post(
+  '/sessions',
+  SessionValidator.createValidator,
+  SessionController.store
+);
 
 routes.get('/deliverymen/:id/deliveries', DeliveryController.index);
 
 routes.put(
   '/deliverymen/:id/deliveries/:delivery_id/withdraw',
+  WithdrawValidator.updateValidator,
   WithdrawController.update
 );
 routes.put(
   '/deliverymen/:id/deliveries/:delivery_id/delivered',
+  DeliveredValidator.updateValidator,
   DeliveredController.update
 );
 
-routes.post('/delivery/:id/problems', DeliveryProblemsController.store);
+routes.post(
+  '/delivery/:id/problems',
+  DeliveryProblemsValidator.createValidator,
+  DeliveryProblemsController.store
+);
+
+/**
+ * Routes that require authentication
+ */
 
 routes.use(authMiddleware);
 
 routes.post('/files', upload.single('file'), FileController.store);
-
-routes.get('/recipients', adminMiddleware, RecipientController.index);
-routes.post('/recipients', adminMiddleware, RecipientController.store);
-routes.put('/recipients/:id', adminMiddleware, RecipientController.update);
-
-routes.get('/deliverymen', adminMiddleware, DeliverymanController.index);
-routes.post('/deliverymen', adminMiddleware, DeliverymanController.store);
-routes.put('/deliverymen/:id', adminMiddleware, DeliverymanController.update);
-routes.delete(
-  '/deliverymen/:id',
-  adminMiddleware,
-  DeliverymanController.delete
-);
-
-routes.get('/orders', adminMiddleware, OrderController.index);
-routes.post('/orders', adminMiddleware, OrderController.store);
-routes.put('/orders/:id', adminMiddleware, OrderController.update);
-routes.delete('/orders/:id', adminMiddleware, OrderController.delete);
 
 routes.get('/deliverymen/:id/notifications', NotificationController.index);
 routes.put(
@@ -66,17 +71,51 @@ routes.put(
   NotificationController.update
 );
 
-routes.get(
-  '/delivery/:id/problems',
-  adminMiddleware,
-  AdminProblemsController.show
-);
-routes.get(
-  '/delivery/problems',
-  adminMiddleware,
-  AdminProblemsController.index
-);
+/**
+ * Routes that can only be accessed by the administrator
+ */
 
-routes.put('/users', adminMiddleware, UserController.update);
+routes.use(adminMiddleware);
+
+routes.get('/recipients', RecipientController.index);
+routes.post(
+  '/recipients',
+  RecipientValidator.createValidator,
+  RecipientController.store
+);
+routes.put(
+  '/recipients/:id',
+  RecipientValidator.updateValidator,
+  RecipientController.update
+);
+routes.delete('/recipients/:id', RecipientController.delete);
+
+routes.get('/deliverymen', DeliverymanController.index);
+routes.post(
+  '/deliverymen',
+  DeliverymanValidator.createValidator,
+  DeliverymanController.store
+);
+routes.put(
+  '/deliverymen/:id',
+  DeliverymanValidator.updateValidator,
+  DeliverymanController.update
+);
+routes.delete('/deliverymen/:id', DeliverymanController.delete);
+
+routes.get('/orders', OrderController.index);
+routes.post('/orders', OrderValidator.createValidator, OrderController.store);
+routes.put(
+  '/orders/:id',
+  OrderValidator.updateValidator,
+  OrderController.update
+);
+routes.delete('/orders/:id', OrderController.delete);
+
+routes.delete('/problems/:id/cancel-delivery', AdminProblemsController.delete);
+routes.get('/delivery/:id/problems', AdminProblemsController.show);
+routes.get('/delivery/problems', AdminProblemsController.index);
+
+routes.put('/users', UserValidator.updateValidator, UserController.update);
 
 export default routes;

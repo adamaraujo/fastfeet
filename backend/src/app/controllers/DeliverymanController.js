@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
 
@@ -37,7 +38,7 @@ class DeliverymanController {
     const deliveryman = await Deliveryman.findByPk(id);
 
     if (!deliveryman) {
-      return res.status(400).json({ error: 'Deliveryman does not exists' });
+      return res.status(400).json({ error: 'Deliveryman does not exist' });
     }
 
     const { email } = req.body;
@@ -68,7 +69,7 @@ class DeliverymanController {
     const deliveryman = await Deliveryman.findByPk(id);
 
     if (!deliveryman) {
-      return res.status(400).json({ error: 'Deliveryman does not exists' });
+      return res.status(400).json({ error: 'Deliveryman does not exist' });
     }
 
     const { avatar_id } = deliveryman;

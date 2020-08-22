@@ -1,9 +1,12 @@
+import * as Yup from 'yup';
 import DeliveryProblems from '../models/DeliveryProblems';
 import Order from '../models/Order';
 
 class DeliveryProblemsController {
   async store(req, res) {
     const { id } = req.params;
+
+    const { description } = req.body;
 
     const delivery = await Order.findByPk(id);
 
@@ -19,7 +22,10 @@ class DeliveryProblemsController {
         .json({ error: 'This delivery was delivered or canceled' });
     }
 
-    const deliveryProblem = await DeliveryProblems.create(req.body);
+    const deliveryProblem = await DeliveryProblems.create({
+      description,
+      delivery_id: id,
+    });
 
     return res.json(deliveryProblem);
   }
