@@ -1,6 +1,5 @@
 import { parseISO, getHours, startOfDay, endOfDay, isToday } from 'date-fns';
 import { Op } from 'sequelize';
-import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
 import Order from '../models/Order';
 

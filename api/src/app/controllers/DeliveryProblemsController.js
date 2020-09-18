@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import DeliveryProblems from '../models/DeliveryProblems';
 import Order from '../models/Order';
 

@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
 
@@ -16,6 +15,18 @@ class DeliverymanController {
     });
 
     return res.json(deliverymen);
+  }
+
+  async show(req, res) {
+    const { id } = req.params;
+
+    const deliveryman = await Deliveryman.findByPk(id);
+
+    if (!deliveryman) {
+      return res.status(400).json({ error: 'Deliveryman does not exist' });
+    }
+
+    return res.json(deliveryman);
   }
 
   async store(req, res) {

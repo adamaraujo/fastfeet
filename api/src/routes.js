@@ -57,6 +57,8 @@ routes.post(
   DeliveryProblemsController.store
 );
 
+routes.get('/deliverymen/:id', DeliverymanController.show);
+
 /**
  * Routes that require authentication
  */
