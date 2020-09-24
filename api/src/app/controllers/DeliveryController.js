@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
+import Recipient from '../models/Recipient';
 
 class DeliveryController {
   async index(req, res) {
@@ -17,6 +18,14 @@ class DeliveryController {
     if (type === 'notDelivered') {
       const deliveries = await Order.findAll({
         where: { end_date: null, canceled_at: null, deliveryman_id: id },
+        attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: Recipient,
+            as: 'recipient',
+            attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+          },
+        ],
       });
 
       return res.json(deliveries);
@@ -24,6 +33,14 @@ class DeliveryController {
     if (type === 'delivered') {
       const deliveries = await Order.findAll({
         where: { end_date: { [Op.ne]: null }, deliveryman_id: id },
+        attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: Recipient,
+            as: 'recipient',
+            attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
+          },
+        ],
       });
 
       return res.json(deliveries);

@@ -6,6 +6,8 @@ import Recipient from '../models/Recipient';
 import Queue from '../../lib/Queue';
 import CancellationMail from '../jobs/CancellationMail';
 
+import Mail from '../../lib/Mail';
+
 class AdminProblemsController {
   async index(req, res) {
     const deliveryProblems = await DeliveryProblems.findAll({
@@ -89,11 +91,28 @@ class AdminProblemsController {
 
     const { recipient, deliveryman, product } = delivery;
 
-    await Queue.add(CancellationMail.key, {
-      recipient,
-      deliveryman,
-      product,
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'Cancelamento de encomenda',
+      template: 'cancellation',
+      context: {
+        product,
+        deliveryman: deliveryman.name,
+        recipient: recipient.name,
+        street: recipient.street,
+        number: recipient.number,
+        complement: recipient.complement ? recipient.complement : '-',
+        state: recipient.state,
+        city: recipient.city,
+        zipcode: recipient.zipcode,
+      },
     });
+
+    // await Queue.add(CancellationMail.key, {
+    //   recipient,
+    //   deliveryman,
+    //   product,
+    // });
 
     return res.json({ message: 'Delivery canceled with success!' });
   }

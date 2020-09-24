@@ -20,7 +20,17 @@ class DeliverymanController {
   async show(req, res) {
     const { id } = req.params;
 
-    const deliveryman = await Deliveryman.findByPk(id);
+    const deliveryman = await Deliveryman.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['name', 'path', 'url'],
+        },
+      ],
+    });
 
     if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman does not exist' });

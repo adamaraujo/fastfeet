@@ -9,6 +9,8 @@ import Queue from '../../lib/Queue';
 import CancellationMail from '../jobs/CancellationMail';
 import WithdrawMail from '../jobs/WithdrawMail';
 
+import Mail from '../../lib/Mail';
+
 class OrderController {
   async store(req, res) {
     const { recipient_id, deliveryman_id } = req.body;
@@ -29,11 +31,28 @@ class OrderController {
 
     const { product } = order;
 
-    await Queue.add(WithdrawMail.key, {
-      recipient,
-      deliveryman,
-      product,
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'Pedido de retirada de encomenda',
+      template: 'withdraw',
+      context: {
+        product,
+        deliveryman: deliveryman.name,
+        recipient: recipient.name,
+        street: recipient.street,
+        number: recipient.number,
+        complement: recipient.complement ? recipient.complement : '-',
+        state: recipient.state,
+        city: recipient.city,
+        zipcode: recipient.zipcode,
+      },
     });
+
+    // await Queue.add(WithdrawMail.key, {
+    //   recipient,
+    //   deliveryman,
+    //   product,
+    // });
 
     await Notification.create({
       user_id: deliveryman_id,
@@ -218,11 +237,28 @@ class OrderController {
 
     const { product } = order;
 
-    await Queue.add(CancellationMail.key, {
-      recipient,
-      deliveryman,
-      product,
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'Cancelamento de encomenda',
+      template: 'cancellation',
+      context: {
+        product,
+        deliveryman: deliveryman.name,
+        recipient: recipient.name,
+        street: recipient.street,
+        number: recipient.number,
+        complement: recipient.complement ? recipient.complement : '-',
+        state: recipient.state,
+        city: recipient.city,
+        zipcode: recipient.zipcode,
+      },
     });
+
+    // await Queue.add(CancellationMail.key, {
+    //   recipient,
+    //   deliveryman,
+    //   product,
+    // });
 
     return res.status(200).json({ message: 'Order deleted with success!' });
   }
