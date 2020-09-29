@@ -19,6 +19,14 @@ const Header = () => {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile);
 
+  function formatName(name) {
+    const names = name.split(' ');
+    const formattedName =
+      names.length > 0 ? `${names[0]} ${names[1]}` : names[0];
+
+    return formattedName;
+  }
+
   function logout() {
     dispatch(signOut());
   }
@@ -29,7 +37,7 @@ const Header = () => {
         <Avatar size={70} name={profile.name} avatar={profile.avatar} />
         <WelcomeContainer>
           <Welcome>Bem vindo de volta,</Welcome>
-          <Name>{profile.name}</Name>
+          <Name>{formatName(profile.name)}</Name>
         </WelcomeContainer>
         <LogoutButton>
           <TouchableOpacity onPress={logout}>

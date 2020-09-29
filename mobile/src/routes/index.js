@@ -6,7 +6,6 @@ import AppRoutes from './appRoutes';
 
 const Routes: React.FC = () => {
   const signed = useSelector((state) => state.auth.signed);
-
   return signed ? <AppRoutes /> : <AuthRoutes />;
 };
 

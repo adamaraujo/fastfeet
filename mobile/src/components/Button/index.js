@@ -4,14 +4,23 @@ import PropTypes from 'prop-types';
 
 import { Container, ButtonText } from './styles';
 
-const Button: React.FC<RectButtonProperties> = ({ children, ...rest }) => (
-  <Container {...rest}>
+const Button: React.FC<RectButtonProperties> = ({
+  children,
+  color,
+  ...rest
+}) => (
+  <Container {...rest} color={color}>
     <ButtonText>{children}</ButtonText>
   </Container>
 );
 
+Button.defaultProps = {
+  color: undefined,
+};
+
 Button.propTypes = {
   children: PropTypes.string.isRequired,
+  color: PropTypes.string,
 };
 
 export default Button;

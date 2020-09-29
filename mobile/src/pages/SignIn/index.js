@@ -37,7 +37,9 @@ const SignIn: React.FC = () => {
           onSubmitEditing={handleSubmit}
         />
 
-        <Button onPress={handleSubmit}>Entrar no sistema</Button>
+        <Button color="#82BF18" onPress={handleSubmit}>
+          Entrar no sistema
+        </Button>
       </Container>
     </ScrollView>
   );

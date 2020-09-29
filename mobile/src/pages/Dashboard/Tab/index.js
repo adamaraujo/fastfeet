@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-// import { View } from 'react-native';
+import PropTypes from 'prop-types';
 
 import DeliveryList from '../../../components/DeliveryList';
 
 import { Container, Title, Options, DeliveryType } from './styles';
 
-const Tab = () => {
+const Tab = ({ navigation }) => {
   const [routes] = useState([
     { key: 'pending', title: 'Pendentes' },
     { key: 'delivered', title: 'Entregues' },
@@ -30,9 +30,13 @@ const Tab = () => {
           })}
         </Options>
       </Container>
-      <DeliveryList option={routes[index].key} />
+      <DeliveryList navigation={navigation} option={routes[index].key} />
     </>
   );
+};
+
+Tab.propTypes = {
+  navigation: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default Tab;
